@@ -1,24 +1,29 @@
-import logo from './logo.svg';
 import './App.css';
+import { Container, Row, Col } from 'react-bootstrap';
+
+import CustomNav from './components/UI/CustomNav';
+import ContactForm from './containers/ContactForm';
+import ContactList from './containers/ContactList';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+    <CustomNav />
+
+    <Container>
+      <Row>
+        <Col md={{ span: 6, offset: 3 }}>
+          <ContactForm />
+        </Col>
+      </Row>
+      <Row>
+        <Col md={12}>
+          <ContactList />
+        </Col>
+
+      </Row>
+    </Container>
+    </>
   );
 }
 
