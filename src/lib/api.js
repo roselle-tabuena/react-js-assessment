@@ -20,6 +20,18 @@ export async function addContact(contactData) {
          }
 }
 
+export async function getContact(id) {
+
+  const response = await fetch(`${FIREBASE_DOMAIN}/contacts/${id}.json`);
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || 'Unable to fetch contact')
+  }
+
+  return {id, ...data}
+}
+
 export async function fetchContacts() {
   const response = await fetch(`${FIREBASE_DOMAIN}/contacts.json`)
 

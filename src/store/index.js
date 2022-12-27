@@ -1,5 +1,5 @@
 import { createSlice, configureStore } from '@reduxjs/toolkit';
-
+import statusSlice from './status-slice';
 
 const contactSlice = createSlice({
   name: 'counter',
@@ -38,7 +38,8 @@ const contactSlice = createSlice({
 });
 
                                 
-const store = configureStore({ reducer: contactSlice.reducer })
+const store = configureStore({ reducer: { dataStatus: statusSlice.reducer, 
+                                          contact: contactSlice.reducer} })
 
 export const contactActions = contactSlice.actions;
 

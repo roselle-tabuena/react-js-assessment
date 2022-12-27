@@ -7,10 +7,9 @@ import CustomCard from '../components/UI/CustomCard';
 import Input from '../components/contacts/Input';
 import { AddContact, alterContact } from '../store/contact-actions';
 import UseInput from '../hooks/use-input';
+import LoadingButton from '../components/UI/LoadingButton';
 
 const ContactForm = () => {
-
-	const [formIsValid, setFormIsValid]= useState(false);
 
   const {value: name, 
 		setValue: setName,
@@ -34,9 +33,17 @@ const ContactForm = () => {
 				reset: resetContact } = UseInput(value => value.length === 11 || value.trim() === '');
 	
 
-	const onEdit =  useSelector((state => state.onEdit));
-	const contacts =  useSelector((state => state.contacts));
+	const onEdit =  useSelector((state => state.contact.onEdit));
+	const contacts =  useSelector((state => state.contact.contacts));
+	const dataStatus = useSelector((state => state.dataStatus.status));
+	const actionType = useSelector((state => state.dataStatus.type));
 	const dispatch = useDispatch();
+
+	let formIsValid = false;
+
+	if(!contactHasError && !emailHasError && !nameHasError) {
+			formIsValid = true;
+	}
 
 
 	const new_contacts = contacts
@@ -69,9 +76,20 @@ const ContactForm = () => {
 		resetName()
 		resetEmail()
 		resetContact()
+
+		formIsValid = false;
+	}
+
+	
+	let submitButton;
+	if (dataStatus === 'LOADING' && (actionType === 'ADD' || actionType === 'UPDATE')) {
+		submitButton = <LoadingButton />
+	} else {
+		submitButton = <Button variant='dark' type='submit' className='w-100' disabled={!formIsValid}>{onEdit[0] ? 'Update' : `Add`} </Button>
 	}
 
   return (<CustomCard title={onEdit[0] ? 'Edit - Contact' : 'Add - Contact' }>
+							
 							<Form id='contact_form' onSubmit={onSubmitHandler}> 
 
 							<Input label='Name:'  
@@ -108,8 +126,7 @@ const ContactForm = () => {
 															onBlur: contactBlurHandlder,
 															name: 'contact' }} />
 
-
-								<Button variant='dark' type='submit' className='w-100' disabled={formIsValid}>{onEdit[0] ? 'Update' : 'Add'}</Button>
+							{submitButton}
 							</Form>
             </CustomCard>
 					)
