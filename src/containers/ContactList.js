@@ -8,6 +8,7 @@ import { contactActions } from '../store';
 
 import Spinner from 'react-bootstrap/Spinner';
 import DialogModal from '../components/UI/DialogModal';
+import CustomAlert from '../components/UI/CustomAlert';
 
 const ContactList = () => {
   const dispatch = useDispatch();
@@ -65,6 +66,15 @@ const ContactList = () => {
                                                 {actions(contact.id)}
                                               </td>
                                             </tr>)
+  }
+
+  if (dataStatus === 'ERROR') {
+
+    contactList = <tr>
+                  <td colSpan={5} className='text-center py-3'>
+                    <p>Something went wrong!</p>
+                  </td>
+                </tr>  
   }
 
 

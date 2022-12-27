@@ -1,4 +1,4 @@
-const FIREBASE_DOMAIN = 'https://react-js-assessment-98c9e-default-rtdb.firebaseio.com'
+const FIREBASE_DOMAIN = 'https://react-js-assessment-98c9e-default-rtdb.firebasei.com'
 
 export async function addContact(contactData) {
 
@@ -9,12 +9,15 @@ export async function addContact(contactData) {
       'Content-Type': 'application/json'
     }
   })
+  
+  console.log('hello world! ')
+  if (!response.ok) {
+    console.log(response.message)
+    throw new Error('Unable to add contact something went wrong.')
+  }
 
   const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message || 'Unable to add contact something went wrong.')
-  }
+  
   return { id: data.name, 
            ...contactData 
          }

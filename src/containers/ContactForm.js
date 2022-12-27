@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
 import { Form, Button } from 'react-bootstrap';
+
 
 import CustomCard from '../components/UI/CustomCard';
 import Input from '../components/contacts/Input';
 import { AddContact, alterContact } from '../store/contact-actions';
 import UseInput from '../hooks/use-input';
 import LoadingButton from '../components/UI/LoadingButton';
+import CustomAlert from '../components/UI/CustomAlert';
 
 const ContactForm = () => {
 
@@ -16,27 +17,29 @@ const ContactForm = () => {
 		hasError: nameHasError,
 		onChangeHandler: nameChangeHandler,
 		onBlurHandler: nameBlurHandlder,
-		reset: resetName } = UseInput(value => value.trim() !== '')
+		reset: resetName } = UseInput(value => value.trim() !== '', 
+																	value => value.replace(/[^a-zA-Z \u00C0-\u00FF , .]/gi, ''))
 
 	const {value: email, 
 			setValue: setEmail,
 			hasError: emailHasError,
 			onChangeHandler: emailChangeHandler,
 			onBlurHandler: emailBlurHandlder,
-			reset: resetEmail } = UseInput(value => value.includes('@'))
+			reset: resetEmail } = UseInput(value => (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value.trim())))
 
 	const {value: contact, 
 				setValue: setContact,
 				hasError: contactHasError,
 				onChangeHandler: contactChangeHandler,
 				onBlurHandler: contactBlurHandlder,
-				reset: resetContact } = UseInput(value => value.length === 11 || value.trim() === '');
+				reset: resetContact } = UseInput(value => value.length === 11 || value.trim() === '', value => value.replace(/[^0-9]/gi, ''));
 	
 
 	const onEdit =  useSelector((state => state.contact.onEdit));
 	const contacts =  useSelector((state => state.contact.contacts));
 	const dataStatus = useSelector((state => state.dataStatus.status));
 	const actionType = useSelector((state => state.dataStatus.type));
+	const actionMessage = useSelector((state => state.dataStatus.message));
 	const dispatch = useDispatch();
 
 	let formIsValid = false;
@@ -44,6 +47,9 @@ const ContactForm = () => {
 	if(!contactHasError && !emailHasError && !nameHasError) {
 			formIsValid = true;
 	}
+
+	const isOnSubmit = (dataStatus === 'SUCCESS' && (actionType === 'ADD' || actionType === 'UPDATE')) 
+	const isOnError = (dataStatus === 'ERROR'  && (actionType === 'ADD' || actionType === 'UPDATE')) 
 
 
 	const new_contacts = contacts
@@ -82,16 +88,20 @@ const ContactForm = () => {
 
 	
 	let submitButton;
-	if (dataStatus === 'LOADING' && (actionType === 'ADD' || actionType === 'UPDATE')) {
+
+	if (isOnSubmit) {
 		submitButton = <LoadingButton />
 	} else {
-		submitButton = <Button variant='dark' type='submit' className='w-100' disabled={!formIsValid}>{onEdit[0] ? 'Update' : `Add`} </Button>
+		submitButton = <Button variant='dark' 
+													 type='submit' 
+													 className='w-100' 
+													 disabled={!formIsValid}>{onEdit[0] ? 'Update' : `Add`} </Button>
 	}
 
   return (<CustomCard title={onEdit[0] ? 'Edit - Contact' : 'Add - Contact' }>
-							
-							<Form id='contact_form' onSubmit={onSubmitHandler}> 
+							{(isOnSubmit || isOnError) && <CustomAlert type={actionType} message={actionMessage} />}
 
+							<Form id='contact_form' onSubmit={onSubmitHandler}> 
 							<Input label='Name:'  
 										 required={true}
 										 hasError={nameHasError}

@@ -5,7 +5,7 @@ const CustomNav = () => {
 
   return (<Navbar bg="dark">
             <Container>
-							<Link to='/contacts' className='text-white navbar-brand fs-2'>
+							<Link to='/contacts' className='text-white font-weight-bold navbar-brand fs-2'>
 								CRUD Contact
 							</Link>
             </Container>

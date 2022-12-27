@@ -1,10 +1,12 @@
 
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams, Link } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
-import { useEffect } from 'react';
+
 import { fetchContact } from '../store/contact-actions';
-import { useDispatch, useSelector } from 'react-redux';
 import CustomCard from '../components/UI/CustomCard';
+import Spinner from 'react-bootstrap/Spinner';
 
 const ContactView = () => {
   const dispatch = useDispatch();
@@ -25,19 +27,27 @@ const ContactView = () => {
               <CustomCard title='Contact - View'>
                 <Row>
                   <Col>
-                    <ul>
-                      <li>{dataResponse.id}</li>
-                      <li>{dataResponse.name}</li>
-                      <li>{dataResponse.contact}</li>
-                      <li>{dataResponse.email}</li>
-                    </ul>
-                    <Link to='/'>Back</Link>
+                  <div className='text-center'>
+                    <label className='text-center fs-4 fw-bolder'>{dataResponse.name}</label>
+                    <p>ID: {dataResponse.id}</p>
+                    <p className='p-0 m-0 fs-6'>Phone: {dataResponse.contact}</p>
+                    <p className='p-0 m-0 fs-6'>Email: {dataResponse.email}</p>
+                  </div>
+                    <Link to='/' className='btn btn-outline-dark'>Back</Link>
                   </Col>
                 </Row>
               </CustomCard>
             </Container>)
   } else {
-    return <p>Loading...</p>
+    return <Container>
+            <CustomCard title='Contact - View'>
+            <div className="d-flex justify-content-center">
+            <Spinner animation="border" role="status" style={{width: '3rem', height: '3rem'}} >
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+           </div>
+           </CustomCard>
+          </Container>
   }
 }
 

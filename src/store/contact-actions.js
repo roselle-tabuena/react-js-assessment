@@ -168,6 +168,7 @@ export const AddContact = (data) => {
 
     } catch(error) {
 
+      console.log(error.message)
       dispatch(statusActions.showStatus({
         status: 'ERROR',
         message: error.message,
