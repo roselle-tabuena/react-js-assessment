@@ -9,15 +9,32 @@ export async function addContact(contactData) {
       'Content-Type': 'application/json'
     }
   })
+  
+  if (!response.ok) {
+    throw new Error('Unable to add contact something went wrong.')
+  }
 
   const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message || 'Unable to add contact something went wrong.')
-  }
+  
   return { id: data.name, 
            ...contactData 
          }
+}
+
+export async function fetchContact(id) {
+
+  const response = await fetch(`${FIREBASE_DOMAIN}/contacts/${id}.json`);
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || 'Unable to fetch contact')
+  }
+
+  if (data === null) {
+    return null
+  }
+
+  return {id, ...data}
 }
 
 export async function fetchContacts() {
@@ -50,6 +67,7 @@ export async function deleteContact(id) {
 
 
 export async function updateContact(id, obj) {
+
   const response = await fetch(`${FIREBASE_DOMAIN}/contacts/${id}.json`, { method: 'PUT',
     body: JSON.stringify(obj)
   });
@@ -57,7 +75,7 @@ export async function updateContact(id, obj) {
   const data = await response.json();
 
   if(!response.ok) {
-      throw new Error(data.message || 'Unable to update')
+    throw new Error(data.message || 'Contact can\'t be updated.')
   }
 
   return data

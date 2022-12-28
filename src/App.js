@@ -1,28 +1,32 @@
-import './App.css';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Route, Redirect, Switch } from 'react-router-dom';
 
+import Contact from './pages/Contact';
+import ContactView from './pages/ContactView';
 import CustomNav from './components/UI/CustomNav';
-import ContactForm from './containers/ContactForm';
-import ContactList from './containers/ContactList';
+import NotFound from './pages/NotFound'
+import Footer from './components/UI/Footer';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
     <>
     <CustomNav />
-
-    <Container>
-      <Row>
-        <Col md={{ span: 6, offset: 3 }}>
-          <ContactForm />
-        </Col>
-      </Row>
-      <Row>
-        <Col md={12}>
-          <ContactList />
-        </Col>
-
-      </Row>
-    </Container>
+    <ToastContainer />
+    <Switch>
+      <Route path='/' exact>
+        <Redirect to='contacts' />
+      </Route>
+      <Route path='/contacts' exact>
+        <Contact />
+      </Route>
+      <Route path='/contacts/:contactId' exact>
+        <ContactView />
+      </Route>
+      <Route path="*">
+        <NotFound />
+      </Route>
+    </Switch>
+    <Footer />
     </>
   );
 }

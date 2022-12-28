@@ -1,6 +1,5 @@
 import { createSlice, configureStore } from '@reduxjs/toolkit';
 
-
 const contactSlice = createSlice({
   name: 'counter',
   initialState: {
@@ -10,7 +9,7 @@ const contactSlice = createSlice({
   reducers: {
     addContact(state, action) {
       const data = action.payload;
-
+      
       state.contacts.push(data)
     },
     removeContact(state, action) {
@@ -33,7 +32,11 @@ const contactSlice = createSlice({
     },
     populateContacts(state, action) {
       state.contacts = action.payload
-    } 
+    },
+    onAddContact(state, action) {
+      console.log(action.payload)
+      // state.onEdit = [false, null]
+    }
   }
 });
 

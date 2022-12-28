@@ -1,52 +1,71 @@
-import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { Form, Button } from 'react-bootstrap';
 
-import CustomCard from '../components/UI/CustomCard';
 import Input from '../components/contacts/Input';
-import { AddContact, alterContact } from '../store/contact-actions';
 import UseInput from '../hooks/use-input';
+import LoadingButton from '../components/UI/LoadingButton';
 
-const ContactForm = () => {
+import useResponse from '../hooks/use-response';
+import { addContact, updateContact } from '../lib/api'
 
-	const [formIsValid, setFormIsValid]= useState(false);
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
+const ContactForm = (props) => {
+
+	const { sendRequest: addContactReq, 
+					status: addStatus } = useResponse(addContact, false, 'ADD_CONTACT');
+
+	const { sendRequest: editContact, 
+					status: editStatus  } = useResponse(updateContact, false, 'UPDATE_CONTACT');
 
   const {value: name, 
 		setValue: setName,
+		isValid: nameIsValid,
 		hasError: nameHasError,
 		onChangeHandler: nameChangeHandler,
 		onBlurHandler: nameBlurHandlder,
-		reset: resetName } = UseInput(value => value.trim() !== '')
+		reset: resetName } = UseInput(value => value.trim() !== '', 
+																	value => value.replace(/[^a-zA-Z \u00C0-\u00FF , .]/gi, ''))
 
 	const {value: email, 
 			setValue: setEmail,
+			isValid: emailIsValid,
 			hasError: emailHasError,
 			onChangeHandler: emailChangeHandler,
 			onBlurHandler: emailBlurHandlder,
-			reset: resetEmail } = UseInput(value => value.includes('@'))
+			reset: resetEmail } = UseInput(value => (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value.trim())))
 
 	const {value: contact, 
 				setValue: setContact,
+				isValid: contactIsValid,
 				hasError: contactHasError,
 				onChangeHandler: contactChangeHandler,
 				onBlurHandler: contactBlurHandlder,
-				reset: resetContact } = UseInput(value => value.length === 11 || value.trim() === '');
+				reset: resetContact } = UseInput(value => value.length === 11 || value.trim() === '', value => value.replace(/[^0-9]/gi, ''));
 	
 
 	const onEdit =  useSelector((state => state.onEdit));
 	const contacts =  useSelector((state => state.contacts));
-	const dispatch = useDispatch();
 
+	const isPending = addStatus === 'pending' || editStatus === 'pending' 
 
-	const new_contacts = contacts
+	let formIsValid = false;
+
+	if(contactIsValid && emailIsValid && nameIsValid) {
+			formIsValid = true;
+	}
+
+	const new_contacts = contacts;
 	
 	useEffect(() => {
 		const [editMode, id] = onEdit 
 
 		if(editMode) {
 			let onEditContact = new_contacts.find(contact => contact.id === id)
-			
+
 			setName(onEditContact.name)
 			setEmail(onEditContact.email)
 			setContact(onEditContact.contact)
@@ -57,62 +76,74 @@ const ContactForm = () => {
 
 	const onSubmitHandler = (event) =>{
 		event.preventDefault()
+		const formData = { name, email, contact}
 
 		if (onEdit[0]) {
-			dispatch(alterContact(onEdit[1], {name, email, contact}))
+			editContact(onEdit[1], formData)
+			toast('Contact successfully was updated!')
 		} else {
-			dispatch(AddContact({name, 
-													email, 
-													contact}))		
+			addContactReq(formData)
+			toast('Contact successfully was added!')
 		}
 
 		resetName()
 		resetEmail()
 		resetContact()
+
+		formIsValid = false;
 	}
 
-  return (<CustomCard title={onEdit[0] ? 'Edit - Contact' : 'Add - Contact' }>
-							<Form id='contact_form' onSubmit={onSubmitHandler}> 
+	
+	let submitButton;
 
-							<Input label='Name:'  
-										 required={true}
-										 hasError={nameHasError}
-										 errorMessage='Please input a valid name'
-										 inputs={{type: 'text', 
-															id: 'name',
-															value: name,
-															onBlur: nameBlurHandlder,
-															onChange: nameChangeHandler,
-															name: 'name' }} />
+	if (isPending) {
+		submitButton = <LoadingButton />
+	} else {
+		submitButton = <Button variant='dark' 
+													 type='submit' 
+													 className='w-100' 
+													 disabled={!formIsValid}>{onEdit[0] ? 'Update' : `Add`}
+										</Button>
+	}
+
+  return (<Form id='contact_form' onSubmit={onSubmitHandler} > 
+						<Input label='Name:'  
+										required={true}
+										hasError={nameHasError}
+										errorMessage='Please input a valid name'
+										inputs={{type: 'text', 
+														id: 'name',
+														value: name,
+														onBlur: nameBlurHandlder,
+														onChange: nameChangeHandler,
+														name: 'name' }} />
 
 
-							<Input label='Email:'  
-										 required={true}
-										 hasError={emailHasError}
-										 errorMessage='Please input a valid email'
-										 inputs={{type: 'email', 
-															id: 'email',
-															value: email,
-															onBlur: emailBlurHandlder,
-															onChange: emailChangeHandler,
-															name: 'email' }} />
+						<Input label='Email:'  
+										required={true}
+										hasError={emailHasError}
+										errorMessage='Please input a valid email'
+										inputs={{type: 'email', 
+														id: 'email',
+														value: email,
+														onBlur: emailBlurHandlder,
+														onChange: emailChangeHandler,
+														name: 'email' }} />
 							
-							<Input label='Contact:'  
-										 required={false}
-										 hasError={contactHasError}
-										 errorMessage='Contact number must be 11 characters'
-										 inputs={{type: 'text', 
-															id: 'contact',
-															value: contact,
-															onChange: contactChangeHandler,
-															onBlur: contactBlurHandlder,
-															name: 'contact' }} />
+						<Input label='Contact:'  
+										required={false}
+										hasError={contactHasError}
+										errorMessage='Contact number must be 11 characters'
+										inputs={{type: 'text', 
+														id: 'contact',
+														value: contact,
+														onChange: contactChangeHandler,
+														onBlur: contactBlurHandlder,
+														name: 'contact' }} />
 
-
-								<Button variant='dark' type='submit' className='w-100' disabled={formIsValid}>{onEdit[0] ? 'Update' : 'Add'}</Button>
-							</Form>
-            </CustomCard>
-					)
+							{submitButton}
+					</Form>
+				)
 }
 
 export default ContactForm;

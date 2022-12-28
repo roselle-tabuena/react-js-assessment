@@ -1,33 +1,67 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-import { Table, ButtonGroup, Button } from 'react-bootstrap'
-import { fetchAllContacts, removeContact } from '../store/contact-actions';
+import { Table } from 'react-bootstrap'
 import { contactActions } from '../store';
+
+import Spinner from 'react-bootstrap/Spinner';
+import DialogModal from '../components/UI/DialogModal';
+import useResponse from '../hooks/use-response';
+import { fetchContacts, deleteContact } from '../lib/api'
+import Actions from '../components/contacts/Actions';
+import { toast } from 'react-toastify';
+
+let isInitial = true;
 
 const ContactList = () => {
   const dispatch = useDispatch();
+ 
+  const { sendRequest: fetchAllContacts, 
+          status, 
+          data: loadedQuotes, 
+          error } = useResponse(fetchContacts, false, 'FETCH_ALL');
+
+  const { sendRequest: removeContact, 
+          status: removeStatus, 
+          data: removeData, 
+          removeError } = useResponse(deleteContact, true, 'REMOVE');
+
+
   const contacts =  useSelector((state => state.contacts))
 
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+
   useEffect(() => {
-    dispatch(fetchAllContacts())
-  }, [dispatch])
+
+    if (isInitial) {
+      fetchAllContacts()
+
+      isInitial = false
+      return
+    }
+  }, [fetchAllContacts])
 
 
   const editContactHandler = (id) => {
     dispatch(contactActions.onEditContact(id))
   }
 
-  const removeContactHandler = (id) => {
-    dispatch(removeContact(id))
+  const removeContactHandler = (id, name) => {
+    toast.error(`${name} was succesfully deleted`, {
+                                              position: "top-right",
+                                              autoClose: 3000,
+                                              hideProgressBar: false,
+                                              closeOnClick: true,
+                                              pauseOnHover: true,
+                                              draggable: true,
+                                              progress: undefined,
+                                              theme: "light",
+                                              })
+    removeContact(id)
   }
 
-
-  const actions = (id) =>  (<ButtonGroup className="mb-2">
-                              <Button variant='outline-dark'>View</Button>
-                              <Button variant='outline-dark' onClick={editContactHandler.bind(null, id)}>Edit</Button>
-                              <Button variant='outline-dark' onClick={removeContactHandler.bind(null, id)}>Delete</Button>
-                            </ButtonGroup>)
 
   let contactList; 
   if (contacts.length === 0) {
@@ -41,21 +75,43 @@ const ContactList = () => {
   if (contacts.length > 0) {
 
     contactList = contacts.map((contact, index) => <tr key={contact.id}>
-                                              <td>{index + 1}</td>
-                                              <td>{contact.name}</td>
-                                              <td>{contact.email}</td>
-                                              <td>{contact.contact}</td>
-                                              <td className='text-center'>
-                                                {actions(contact.id)}
-                                              </td>
-                                            </tr>)
+                                                    <td>{contact.id}</td>
+                                                    <td>{contact.name}</td>
+                                                    <td>{contact.email}</td>
+                                                    <td>{contact.contact}</td>
+                                                    <td className='text-center'>
+                                                      {<Actions id={contact.id} 
+                                                                editContactHandler={editContactHandler.bind(null, contact.id)} 
+                                                                removeContactHandler={removeContactHandler.bind(null, contact.id, contact.name)}/>}
+                                                    </td>
+                                                  </tr>)
+  }
+
+  if (error) {
+
+    contactList = <tr>
+                  <td colSpan={5} className='text-center py-3'>
+                    <p>Something went wrong!</p>
+                  </td>
+                </tr>  
   }
 
 
+  if (status === 'pending') {
+    contactList = <tr>
+                    <td colSpan={5} className='text-center py-3'>
+                        <Spinner animation="border" role="status">
+                          <span className="visually-hidden">Loading...</span>
+                        </Spinner>  
+                    </td>
+                  </tr>  
+  }
 
   return (
-      
-    <Table className='mt-5' striped bordered responsive>
+    <>
+    <DialogModal show={show} handleClose={handleClose} dataStatus={removeStatus} title='Remove - Contact' message={removeError} />
+
+    <Table  striped bordered responsive>
       <thead>
         <tr>
           <th>ID</th>
@@ -68,7 +124,9 @@ const ContactList = () => {
         <tbody>
           {contactList}
         </tbody>
-      </Table>  )
+      </Table>  
+    </>
+  )
 }
 
 export default ContactList;
