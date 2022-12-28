@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { Table } from 'react-bootstrap'
 import { contactActions } from '../store';
@@ -48,16 +48,7 @@ const ContactList = () => {
   }
 
   const removeContactHandler = (id, name) => {
-    toast.error(`${name} was succesfully deleted`, {
-                                              position: "top-right",
-                                              autoClose: 3000,
-                                              hideProgressBar: false,
-                                              closeOnClick: true,
-                                              pauseOnHover: true,
-                                              draggable: true,
-                                              progress: undefined,
-                                              theme: "light",
-                                              })
+    toast.error(`${name} was succesfully deleted`, { autoClose: 3000 })
     removeContact(id)
   }
 
@@ -106,23 +97,20 @@ const ContactList = () => {
                   </tr>  
   }
 
-  return (
-    <>
-    <Table  striped bordered responsive>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Contact</th>
-          <th className='w-25 text-center'></th>
-        </tr>
-      </thead>
-        <tbody>
-          {contactList}
-        </tbody>
-      </Table>  
-    </>
+  return ( <Table  striped bordered responsive className='mb-5 pb-5'>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Contact</th>
+              <th className='w-25 text-center'></th>
+            </tr>
+          </thead>
+            <tbody>
+              {contactList}
+            </tbody>
+          </Table>  
   )
 }
 
