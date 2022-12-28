@@ -1,11 +1,10 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { Table } from 'react-bootstrap'
 import { contactActions } from '../store';
 
 import Spinner from 'react-bootstrap/Spinner';
-import DialogModal from '../components/UI/DialogModal';
 import useResponse from '../hooks/use-response';
 import { fetchContacts, deleteContact } from '../lib/api'
 import Actions from '../components/contacts/Actions';
@@ -18,20 +17,20 @@ const ContactList = () => {
  
   const { sendRequest: fetchAllContacts, 
           status, 
-          data: loadedQuotes, 
           error } = useResponse(fetchContacts, false, 'FETCH_ALL');
 
   const { sendRequest: removeContact, 
-          status: removeStatus, 
-          data: removeData, 
           removeError } = useResponse(deleteContact, true, 'REMOVE');
-
 
   const contacts =  useSelector((state => state.contacts))
 
-  const [show, setShow] = useState(false);
+  useEffect (() => {
 
-  const handleClose = () => setShow(false);
+    if (removeError) {
+      toast(removeError)
+    }
+
+  }, [removeError])
 
   useEffect(() => {
 
@@ -49,19 +48,9 @@ const ContactList = () => {
   }
 
   const removeContactHandler = (id, name) => {
-    toast.error(`${name} was succesfully deleted`, {
-                                              position: "top-right",
-                                              autoClose: 3000,
-                                              hideProgressBar: false,
-                                              closeOnClick: true,
-                                              pauseOnHover: true,
-                                              draggable: true,
-                                              progress: undefined,
-                                              theme: "light",
-                                              })
+    toast.error(`${name} was succesfully deleted`, { autoClose: 3000 })
     removeContact(id)
   }
-
 
   let contactList; 
   if (contacts.length === 0) {
@@ -74,11 +63,11 @@ const ContactList = () => {
 
   if (contacts.length > 0) {
 
-    contactList = contacts.map((contact, index) => <tr key={contact.id}>
-                                                    <td>{contact.id}</td>
-                                                    <td>{contact.name}</td>
-                                                    <td>{contact.email}</td>
-                                                    <td>{contact.contact}</td>
+    contactList = contacts.map((contact) => <tr key={contact.id}>
+                                                    <td headers='contact id'>{contact.id}</td>
+                                                    <td headers='contact name'>{contact.name}</td>
+                                                    <td headers='contact email'>{contact.email}</td>
+                                                    <td headers='contact number'>{contact.contact}</td>
                                                     <td className='text-center'>
                                                       {<Actions id={contact.id} 
                                                                 editContactHandler={editContactHandler.bind(null, contact.id)} 
@@ -107,25 +96,20 @@ const ContactList = () => {
                   </tr>  
   }
 
-  return (
-    <>
-    <DialogModal show={show} handleClose={handleClose} dataStatus={removeStatus} title='Remove - Contact' message={removeError} />
-
-    <Table  striped bordered responsive>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Contact</th>
-          <th className='w-25 text-center'></th>
-        </tr>
-      </thead>
-        <tbody>
-          {contactList}
-        </tbody>
-      </Table>  
-    </>
+  return ( <Table  striped bordered responsive className='mb-5 pb-5'>
+          <thead>
+            <tr>
+              <th id='id'>ID</th>
+              <th id='name'>Name</th>
+              <th id='email'>Email</th>
+              <th id='contact'>Contact</th>
+              <th id='actions' className='w-25 text-center'></th>
+            </tr>
+          </thead>
+            <tbody>
+              {contactList}
+            </tbody>
+          </Table>  
   )
 }
 

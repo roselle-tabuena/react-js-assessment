@@ -3,8 +3,7 @@ import { Route, Redirect, Switch } from 'react-router-dom';
 import Contact from './pages/Contact';
 import ContactView from './pages/ContactView';
 import CustomNav from './components/UI/CustomNav';
-import NotFound from './pages/NotFound'
-import Footer from './components/UI/Footer';
+import NotFound from './pages/NotFound';
 import { ToastContainer } from 'react-toastify';
 
 function App() {
@@ -26,7 +25,6 @@ function App() {
         <NotFound />
       </Route>
     </Switch>
-    <Footer />
     </>
   );
 }

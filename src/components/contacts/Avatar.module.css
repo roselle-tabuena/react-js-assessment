@@ -1,0 +1,38 @@
+
+@media (min-width: 576px) { 
+  .avatar-image {
+    width: 50%;
+  }
+}
+
+@media (min-width: 768px) { 
+  .avatar-image {
+    width: 70%;
+  }
+
+}
+
+.selected {
+  background-color: rgb(77, 107, 238) !important;
+}
+
+.avatar-buttons {
+  border-color: rgb(71, 143, 215) !important;
+}
+
+.avatar-buttons:hover {
+  background-color:  rgb(209, 217, 255) !important;
+}
+
+.focus {
+  border-color: rgb(116, 19, 19) !important;
+}
+
+
+.avatar-buttons:focus {
+  background-color:  rgb(175, 22, 22) !important;
+}
+
+input:focus {
+  outline: 1px solid red;
+ }
