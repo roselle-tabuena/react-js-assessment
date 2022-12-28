@@ -5,7 +5,7 @@ const Input = (props) => {
   const { inputs, label, required, errorMessage, hasError } = props 
 
   const errorDisplay = <div id={`${inputs.id}HelpBlock`} className="form-text text-danger">
-                          {errorMessage}
+                          {inputs.value === '' ? `${label} can't be blank.`: errorMessage}
                         </div>
 
   return (<Form.Group className="mb-3">

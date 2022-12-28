@@ -1,15 +1,16 @@
 
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useParams, Link } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 
-import { fetchContact, deleteContact } from '../lib/api'
+import { fetchContact } from '../lib/api'
 import useResponse from '../hooks/use-response';
 import CustomCard from '../components/UI/CustomCard';
 import Spinner from 'react-bootstrap/Spinner';
+import LetteredAvatar from 'react-lettered-avatar';
 
 const ContactView = () => {
+  
   const params = useParams();
   const { contactId } = params;
 
@@ -29,16 +30,44 @@ const ContactView = () => {
                   </Spinner>
                 </div>
 
-  if (status === 'completed' && data !== null) {
+if (status === 'completed' && data !== null) {
+    const img = require(`../assets/avatar/${data.avatar}.png`);
+
     content =  <Row>
                 <Col>
-                <div className='text-center'>
-                  <label className='text-center fs-4 fw-bolder'>{data.name}</label>
-                  <p>ID: {data.id}</p>
-                  {data.contact && <p className='p-0 m-0 fs-6'>Phone: {data.contact}</p>}
-                  <p className='p-0 m-0 fs-6'>Email: {data.email}</p>
-                </div>
-                  <Link to='/' className='btn btn-outline-dark'>Back</Link>
+                  <table className='w-auto mx-auto'>
+                    <tbody>
+
+                      <tr>
+                        <td className='text-center'  colSpan='2'>
+                          {data.avatar === 'no-avatar' && <LetteredAvatar name={data.name}  
+                                                                            imgClass='mx-auto'
+                                                                            backgroundColor="#023167" 
+                                                                            size={100} />}
+                          {data.avatar !== 'no-avatar' && <img src={img} alt={img} />}
+                        </td> 
+                      </tr>   
+                      <tr className='text-center'>
+                        <td  colSpan='2'><label className='text-center fs-4 fw-bolder' arial-label='contact-name'>{data.name}</label></td>
+                      </tr>
+
+                      <tr>
+                        <th>ID: </th>
+                        <td>{data.id}</td>
+                      </tr>
+                        
+                      <tr>
+                        <th>Email: </th>
+                        <td>{data.email}</td>
+                      </tr>
+                      
+                      {data.contact && <tr>
+                                          <td>Phone: </td>
+                                          <td>{data.contact}</td>
+                                        </tr>}
+                    </tbody>
+                  </table>
+                  
                 </Col>
               </Row>
   }
@@ -57,9 +86,14 @@ const ContactView = () => {
 
 
     return <Container>
-            <CustomCard title='Contact - View'>
-            {content}
-           </CustomCard>
+            <Row>
+            <Col md={{ span: 6, offset: 3 }} sm={{ span: 8, offset: 2}}>
+              <CustomCard title='View - Contact'>
+                {content}
+                <Link to='/' aria-label='Back to index'  className='btn btn-outline-dark mt-3'>Back</Link>
+              </CustomCard>
+            </Col>
+            </Row>
           </Container>
 }
 

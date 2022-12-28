@@ -26,7 +26,7 @@ function App() {
         <NotFound />
       </Route>
     </Switch>
-    <Footer />
+      <div className='mt-4 pt-5'></div>
     </>
   );
 }

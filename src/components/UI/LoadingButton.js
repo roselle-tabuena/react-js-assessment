@@ -2,7 +2,7 @@ import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 
 function LoadingButton() {
-  return (<Button variant="dark" className='w-100' disabled>
+  return (<Button variant="dark" className='w-100' aria-label='Loading' disabled>
                   <Spinner
                     as="span"
                     animation="grow"

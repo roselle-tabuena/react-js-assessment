@@ -5,7 +5,6 @@ import { Table } from 'react-bootstrap'
 import { contactActions } from '../store';
 
 import Spinner from 'react-bootstrap/Spinner';
-import DialogModal from '../components/UI/DialogModal';
 import useResponse from '../hooks/use-response';
 import { fetchContacts, deleteContact } from '../lib/api'
 import Actions from '../components/contacts/Actions';
@@ -18,20 +17,20 @@ const ContactList = () => {
  
   const { sendRequest: fetchAllContacts, 
           status, 
-          data: loadedQuotes, 
           error } = useResponse(fetchContacts, false, 'FETCH_ALL');
 
   const { sendRequest: removeContact, 
-          status: removeStatus, 
-          data: removeData, 
           removeError } = useResponse(deleteContact, true, 'REMOVE');
-
 
   const contacts =  useSelector((state => state.contacts))
 
-  const [show, setShow] = useState(false);
+  useEffect (() => {
 
-  const handleClose = () => setShow(false);
+    if (removeError) {
+      toast(removeError)
+    }
+
+  }, [removeError])
 
   useEffect(() => {
 
@@ -74,7 +73,7 @@ const ContactList = () => {
 
   if (contacts.length > 0) {
 
-    contactList = contacts.map((contact, index) => <tr key={contact.id}>
+    contactList = contacts.map((contact) => <tr key={contact.id}>
                                                     <td>{contact.id}</td>
                                                     <td>{contact.name}</td>
                                                     <td>{contact.email}</td>
@@ -109,8 +108,6 @@ const ContactList = () => {
 
   return (
     <>
-    <DialogModal show={show} handleClose={handleClose} dataStatus={removeStatus} title='Remove - Contact' message={removeError} />
-
     <Table  striped bordered responsive>
       <thead>
         <tr>
