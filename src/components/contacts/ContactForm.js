@@ -1,29 +1,20 @@
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { Form, Button } from 'react-bootstrap';
 
-import Input from '../components/contacts/Input';
-import UseInput from '../hooks/use-input';
-import LoadingButton from '../components/UI/LoadingButton';
-
-import useResponse from '../hooks/use-response';
-import { addContact, updateContact } from '../lib/api'
+import Input from './Input';
+import UseInput from '../../hooks/use-input';
+import LoadingButton from '../UI/LoadingButton';
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { contactActions } from '../store/index'
-import Avatar from '../components/contacts/Avatar';
+import Avatar from './Avatar';
  
 
-const ContactForm = () => {
-
-	const dispatch = useDispatch()
-
-	const { sendRequest: addContactReq, 
-					status: addStatus } = useResponse(addContact, false, 'ADD_CONTACT');
-
-	const { sendRequest: editContact, 
-					status: editStatus  } = useResponse(updateContact, false, 'UPDATE_CONTACT');
+const ContactForm = (props) => {
+  const { onEdit, 
+          contacts, 
+          editId, 
+          isPending } = props
 
 	const default_image = 'no-avatar'
 	const [selectedAvatar, setSelectedAvatar] = useState(default_image);
@@ -54,10 +45,6 @@ const ContactForm = () => {
 				reset: resetContact } = UseInput(value => value.length === 11, value => value.replace(/[^0-9]/gi, ''));
 	
 
-	const onEdit =  useSelector((state => state.onEdit));
-	const contacts =  useSelector((state => state.contacts));
-
-	const isPending = addStatus === 'pending' || editStatus === 'pending' 
 
 	let formIsValid = false;
 
@@ -65,49 +52,21 @@ const ContactForm = () => {
 			formIsValid = true;
 	}
 
-	const new_contacts = contacts;
-	
-	useEffect(() => {
-		const [editMode, id] = onEdit 
 
-		if(editMode) {
-			let onEditContact = new_contacts.find(contact => contact.id === id)
+	useEffect(() => {
+
+		if(onEdit) {
+			let onEditContact = contacts.find(contact => contact.id === editId)
 
 			toast.info('You are on edit mode', { autoClose: 3000 })
+
 			setSelectedAvatar(onEditContact.avatar || 'no-avatar')
 			setName(onEditContact.name)
 			setEmail(onEditContact.email)
 			setContact(onEditContact.contact)
 		}
 
-	}, [onEdit, new_contacts, setName, setEmail, setContact])
-
-
-	const onSubmitHandler = (event) =>{
-		event.preventDefault()
-		const formData = { name, email, contact, avatar: selectedAvatar };
-		let message = '';
-
-		if (onEdit[0]) {
-			editContact(onEdit[1], formData)
-			message = 'Contact successfully was updated!'
-		} else {
-			addContactReq(formData)
-			message = 'Contact successfully was added!'
-		}
-		
-		toast.success(message)
-
-		resetForm();
-		formIsValid = false;
-	}
-
-	const handleCancel = () => {
-
-		resetForm();
-		dispatch(contactActions.cancelEdit());
-	}
-
+	}, [onEdit, editId, contacts, setName, setEmail, setContact])
 	
 	const resetForm = () => {
 		setSelectedAvatar(default_image)
@@ -122,8 +81,27 @@ const ContactForm = () => {
 		setSelectedAvatar(selectedAvatar)
 	}
 
-	
-	let submitButton;
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const formData = { name, 
+                       email, 
+                       contact, 
+                       avatar: selectedAvatar };
+
+    props.onSubmit(formData);
+
+    resetForm()
+  }
+
+	const handleCancel = () => {
+
+		resetForm();
+    props.onCancel();
+	}
+
+
+  let submitButton;
 
 	if (isPending) {
 		submitButton = <LoadingButton />
@@ -132,13 +110,13 @@ const ContactForm = () => {
 													 type='submit' 
 													 className='w-100' 
 													 aria-label='submit' 
-													 disabled={!formIsValid}>{onEdit[0] ? 'Update' : `Add`}
+													 disabled={!formIsValid}>{onEdit ? 'Update' : `Add`}
 										</Button>
 	}
+	
 
-
-  return (<Form id='contact_form' onSubmit={onSubmitHandler} > 
-						<Avatar onEdit={onEdit[0]} onSelectAvatar={handleSelectedAvatar} selectedAvatar={selectedAvatar} />
+  return (<Form id='contact_form' onSubmit={handleSubmit} > 
+						<Avatar onEdit={onEdit} onSelectAvatar={handleSelectedAvatar} selectedAvatar={selectedAvatar} />
 						<Input label='Name'  
 										required={true}
 										hasError={nameHasError}
@@ -176,9 +154,9 @@ const ContactForm = () => {
 														'aria-label': "Your contact number",
 														name: 'contact' }} />
 
-							{submitButton}
+            {submitButton}
 
-							{onEdit[0] &&  <Button variant='secondary' 
+            {props.onEdit &&  <Button variant='outline-secondary' 
 															type='button' 
 															className='w-100 mt-2' 
 															onClick={handleCancel}

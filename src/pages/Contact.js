@@ -2,10 +2,9 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 
 
-
 import ContactList from "../containers/ContactList";
 import CustomCard from '../components/UI/CustomCard';
-import ContactForm from '../containers/ContactForm';
+import NewContact from '../containers/NewContact'
 
 const Contact = () => {
 
@@ -16,7 +15,7 @@ const Contact = () => {
           <Row>
             <Col md={{ span: 6, offset: 3 }}>
               <CustomCard title={editMode ? 'Edit - Contact' : 'Add - Contact' }>
-                <ContactForm />
+                <NewContact />
               </CustomCard>
             </Col>
           </Row>
@@ -24,7 +23,7 @@ const Contact = () => {
           <Row>
             <Col md={12}>
               <div aria-label='List of Contacts'>
-                <h1 className='fs-2 mt-5'>Contact List</h1>
+                <h1 className='fs-2 mt-5 mb-3'>Contact List</h1>
               </div>
               <ContactList />
             </Col>
