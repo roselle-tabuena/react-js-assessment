@@ -1,20 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Alert from 'react-bootstrap/Alert';
 
 const CustomAlert = (props) => {
+
+
   const [show, setShow] = useState(true);
+  const variant = props.error ? 'danger' : 'success'
 
-  const variants = { 'ERROR': 'danger',
-                     'SUCCESS': 'success' }
 
-  if(!show) {
-    return 
+  useEffect(() => {
+    const timeId = setTimeout(() => {
+      setShow(false)
+    }, 3000)
+
+    return () => {
+      clearTimeout(timeId)
+    }
+  }, []);
+
+  if(show === false) {
+    return null
   }
 
-  console.log(props.type)
   return (
-    <Alert variant={variants[props.type]} onClose={() => setShow(false)} dismissible>
-      <p>{props.message}</p>
+    <Alert variant={variant} onClose={() => setShow(false)} dismissible>
+      <p>{props.message ? props.message : props.error} {show}</p>
     </Alert>
   );
 }

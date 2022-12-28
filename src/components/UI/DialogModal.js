@@ -4,25 +4,25 @@ import Modal from 'react-bootstrap/Modal';
 import Spinner from 'react-bootstrap/Spinner';
 
 const DialogModal = (props) => {
-
   let content;
 
-  if(props.dataStatus === 'LOADING') {
+  if(props.dataStatus === 'pending') {
     content = <div className='text-center'>
                 <Spinner animation="border" role="status">
                   <span className="visually-hidden">Loading...</span>
                 </Spinner>
               </div>
-  } else if(props.dataStatus === 'SUCCESS') {
-    content = props.message
   }
-
+  
+  if(props.dataStatus === 'completed') {
+    content = props.message ?  props.message : 'Successfully deleted!'
+  }
 
   return (
     <>
       <Modal show={props.show} onHide={props.handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>{props.title} {props.isLoading}</Modal.Title>
+          <Modal.Title>{props.title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {content}

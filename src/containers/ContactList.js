@@ -1,50 +1,67 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { Route, Link } from 'react-router-dom';
 
-import { Table, ButtonGroup, Button } from 'react-bootstrap'
-import { fetchAllContacts, removeContact } from '../store/contact-actions';
+import { Table } from 'react-bootstrap'
 import { contactActions } from '../store';
 
 import Spinner from 'react-bootstrap/Spinner';
 import DialogModal from '../components/UI/DialogModal';
-import CustomAlert from '../components/UI/CustomAlert';
+import useResponse from '../hooks/use-response';
+import { fetchContacts, deleteContact } from '../lib/api'
+import Actions from '../components/contacts/Actions';
+import { toast } from 'react-toastify';
+
+let isInitial = true;
 
 const ContactList = () => {
   const dispatch = useDispatch();
-  const contacts =  useSelector((state => state.contact.contacts))
-  const dataStatus = useSelector((state => state.dataStatus.status))
-  const actionType = useSelector((state => state.dataStatus.type))
+ 
+  const { sendRequest: fetchAllContacts, 
+          status, 
+          data: loadedQuotes, 
+          error } = useResponse(fetchContacts, false, 'FETCH_ALL');
+
+  const { sendRequest: removeContact, 
+          status: removeStatus, 
+          data: removeData, 
+          removeError } = useResponse(deleteContact, true, 'REMOVE');
+
+
+  const contacts =  useSelector((state => state.contacts))
 
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
 
   useEffect(() => {
-    if (actionType === null || actionType === 'FETCH') {
-      dispatch(fetchAllContacts())
+
+    if (isInitial) {
+      fetchAllContacts()
+
+      isInitial = false
+      return
     }
-  }, [dispatch, actionType])
+  }, [fetchAllContacts])
 
 
   const editContactHandler = (id) => {
     dispatch(contactActions.onEditContact(id))
   }
 
-  const removeContactHandler = (id) => {
-    setShow(true)
-    dispatch(removeContact(id))
+  const removeContactHandler = (id, name) => {
+    toast.error(`${name} was succesfully deleted`, {
+                                              position: "top-right",
+                                              autoClose: 3000,
+                                              hideProgressBar: false,
+                                              closeOnClick: true,
+                                              pauseOnHover: true,
+                                              draggable: true,
+                                              progress: undefined,
+                                              theme: "light",
+                                              })
+    removeContact(id)
   }
 
-
-  const actions = (id) =>  (<ButtonGroup className="mb-2">
-                              <Link className='btn btn-outline-dark' to={`/contacts/${id}`}>
-                                View
-                              </Link>
-                              <Button variant='outline-dark' onClick={editContactHandler.bind(null, id)}>Edit</Button>
-                              <Button variant='outline-dark' onClick={removeContactHandler.bind(null, id)}>Delete</Button>
-                            </ButtonGroup>)
 
   let contactList; 
   if (contacts.length === 0) {
@@ -58,17 +75,19 @@ const ContactList = () => {
   if (contacts.length > 0) {
 
     contactList = contacts.map((contact, index) => <tr key={contact.id}>
-                                              <td>{index + 1}</td>
-                                              <td>{contact.name}</td>
-                                              <td>{contact.email}</td>
-                                              <td>{contact.contact}</td>
-                                              <td className='text-center'>
-                                                {actions(contact.id)}
-                                              </td>
-                                            </tr>)
+                                                    <td>{contact.id}</td>
+                                                    <td>{contact.name}</td>
+                                                    <td>{contact.email}</td>
+                                                    <td>{contact.contact}</td>
+                                                    <td className='text-center'>
+                                                      {<Actions id={contact.id} 
+                                                                editContactHandler={editContactHandler.bind(null, contact.id)} 
+                                                                removeContactHandler={removeContactHandler.bind(null, contact.id, contact.name)}/>}
+                                                    </td>
+                                                  </tr>)
   }
 
-  if (dataStatus === 'ERROR') {
+  if (error) {
 
     contactList = <tr>
                   <td colSpan={5} className='text-center py-3'>
@@ -78,7 +97,7 @@ const ContactList = () => {
   }
 
 
-  if (dataStatus === 'LOADING' && actionType === 'FETCH') {
+  if (status === 'pending') {
     contactList = <tr>
                     <td colSpan={5} className='text-center py-3'>
                         <Spinner animation="border" role="status">
@@ -88,22 +107,11 @@ const ContactList = () => {
                   </tr>  
   }
 
-  let onRemoveLoading = false;
-  if (dataStatus === 'LOADING' && actionType === 'REMOVE') {
-    onRemoveLoading = true;
-  }
-
-  let removeMessage = ''
-  if (dataStatus === 'SUCCESS' && actionType === 'REMOVE') {
-    removeMessage = 'Contact successfully removed!'
-    onRemoveLoading = false;
-  }
-
   return (
     <>
-    <DialogModal show={show} handleClose={handleClose} dataStatus={dataStatus} title='Remove - Contact' message={removeMessage} />
+    <DialogModal show={show} handleClose={handleClose} dataStatus={removeStatus} title='Remove - Contact' message={removeError} />
 
-    <Table className='mt-5' striped bordered responsive>
+    <Table  striped bordered responsive>
       <thead>
         <tr>
           <th>ID</th>

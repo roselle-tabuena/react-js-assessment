@@ -1,16 +1,28 @@
 import { Container, Row, Col } from 'react-bootstrap';
-import ContactForm from "../containers/ContactForm";
+import { useSelector } from 'react-redux';
+
+
 import ContactList from "../containers/ContactList";
+import CustomCard from '../components/UI/CustomCard';
+import ContactForm from '../containers/ContactForm';
 
 const Contact = () => {
+
+  const onEdit =  useSelector((state => state.onEdit));
+  const [editMode, ] = onEdit;
+
   return (<Container>
           <Row>
             <Col md={{ span: 6, offset: 3 }}>
-              <ContactForm />
+              <CustomCard title={editMode ? 'Edit - Contact' : 'Add - Contact' }>
+                <ContactForm />
+              </CustomCard>
             </Col>
           </Row>
+          
           <Row>
             <Col md={12}>
+              <h1 className='fs-2 mt-5'>Contact List</h1>
               <ContactList />
             </Col>
           </Row>

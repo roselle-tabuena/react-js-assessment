@@ -5,12 +5,13 @@ import ContactView from './pages/ContactView';
 import CustomNav from './components/UI/CustomNav';
 import NotFound from './pages/NotFound'
 import Footer from './components/UI/Footer';
-
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
     <>
     <CustomNav />
+    <ToastContainer />
     <Switch>
       <Route path='/' exact>
         <Redirect to='contacts' />

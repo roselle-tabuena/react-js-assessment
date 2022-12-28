@@ -1,4 +1,4 @@
-const FIREBASE_DOMAIN = 'https://react-js-assessment-98c9e-default-rtdb.firebasei.com'
+const FIREBASE_DOMAIN = 'https://react-js-assessment-98c9e-default-rtdb.firebaseio.com'
 
 export async function addContact(contactData) {
 
@@ -10,9 +10,7 @@ export async function addContact(contactData) {
     }
   })
   
-  console.log('hello world! ')
   if (!response.ok) {
-    console.log(response.message)
     throw new Error('Unable to add contact something went wrong.')
   }
 
@@ -23,13 +21,17 @@ export async function addContact(contactData) {
          }
 }
 
-export async function getContact(id) {
+export async function fetchContact(id) {
 
   const response = await fetch(`${FIREBASE_DOMAIN}/contacts/${id}.json`);
   const data = await response.json();
 
   if (!response.ok) {
     throw new Error(data.message || 'Unable to fetch contact')
+  }
+
+  if (data === null) {
+    return null
   }
 
   return {id, ...data}
@@ -65,6 +67,7 @@ export async function deleteContact(id) {
 
 
 export async function updateContact(id, obj) {
+
   const response = await fetch(`${FIREBASE_DOMAIN}/contacts/${id}.json`, { method: 'PUT',
     body: JSON.stringify(obj)
   });
@@ -72,7 +75,7 @@ export async function updateContact(id, obj) {
   const data = await response.json();
 
   if(!response.ok) {
-      throw new Error(data.message || 'Unable to update')
+    throw new Error(data.message || 'Contact can\'t be updated.')
   }
 
   return data
