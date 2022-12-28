@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import classes from './Avatar.module.css'
 
 const Avatar = (props) => { 
