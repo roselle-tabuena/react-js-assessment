@@ -52,7 +52,6 @@ const ContactList = () => {
     removeContact(id)
   }
 
-
   let contactList; 
   if (contacts.length === 0) {
 
@@ -65,10 +64,10 @@ const ContactList = () => {
   if (contacts.length > 0) {
 
     contactList = contacts.map((contact) => <tr key={contact.id}>
-                                                    <td>{contact.id}</td>
-                                                    <td>{contact.name}</td>
-                                                    <td>{contact.email}</td>
-                                                    <td>{contact.contact}</td>
+                                                    <td headers='contact id'>{contact.id}</td>
+                                                    <td headers='contact name'>{contact.name}</td>
+                                                    <td headers='contact email'>{contact.email}</td>
+                                                    <td headers='contact number'>{contact.contact}</td>
                                                     <td className='text-center'>
                                                       {<Actions id={contact.id} 
                                                                 editContactHandler={editContactHandler.bind(null, contact.id)} 
@@ -100,11 +99,11 @@ const ContactList = () => {
   return ( <Table  striped bordered responsive className='mb-5 pb-5'>
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Contact</th>
-              <th className='w-25 text-center'></th>
+              <th id='id'>ID</th>
+              <th id='name'>Name</th>
+              <th id='email'>Email</th>
+              <th id='contact'>Contact</th>
+              <th id='actions' className='w-25 text-center'></th>
             </tr>
           </thead>
             <tbody>

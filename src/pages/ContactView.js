@@ -53,17 +53,17 @@ if (status === 'completed' && data !== null) {
 
                       <tr>
                         <th>ID: </th>
-                        <td>{data.id}</td>
+                        <td className='ps-2'>{data.id}</td>
                       </tr>
                         
                       <tr>
                         <th>Email: </th>
-                        <td>{data.email}</td>
+                        <td className='ps-2'>{data.email}</td>
                       </tr>
                       
                       {data.contact && <tr>
-                                          <td>Phone: </td>
-                                          <td>{data.contact}</td>
+                                          <th>Phone: </th>
+                                          <td className='ps-2'>{data.contact}</td>
                                         </tr>}
                     </tbody>
                   </table>

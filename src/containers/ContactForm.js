@@ -51,7 +51,7 @@ const ContactForm = () => {
 				hasError: contactHasError,
 				onChangeHandler: contactChangeHandler,
 				onBlurHandler: contactBlurHandlder,
-				reset: resetContact } = UseInput(value => value.length === 11 || value.trim() === '', value => value.replace(/[^0-9]/gi, ''));
+				reset: resetContact } = UseInput(value => value.length === 11, value => value.replace(/[^0-9]/gi, ''));
 	
 
 	const onEdit =  useSelector((state => state.onEdit));
@@ -139,7 +139,7 @@ const ContactForm = () => {
 
   return (<Form id='contact_form' onSubmit={onSubmitHandler} > 
 						<Avatar onEdit={onEdit[0]} onSelectAvatar={handleSelectedAvatar} selectedAvatar={selectedAvatar} />
-						<Input label='Name:'  
+						<Input label='Name'  
 										required={true}
 										hasError={nameHasError}
 										errorMessage='Please input a valid name'
@@ -152,7 +152,7 @@ const ContactForm = () => {
 														name: 'name' }} />
 
 
-						<Input label='Email:'  
+						<Input label='Email'  
 										required={true}
 										hasError={emailHasError}
 										errorMessage='Please input a valid email'
@@ -164,8 +164,8 @@ const ContactForm = () => {
 														'aria-label': "Your Email",
 														name: 'email' }} />
 							
-						<Input label='Contact:'  
-										required={false}
+						<Input label='Contact'  
+										required={true}
 										hasError={contactHasError}
 										errorMessage='Contact number must be 11 characters'
 										inputs={{type: 'text', 
