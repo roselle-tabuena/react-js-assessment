@@ -12,6 +12,13 @@
 
 }
 
+@media (max-width: 576px) { 
+  .avatar-image {
+    width: 60%;
+  }
+
+}
+
 .selected {
   background-color: rgb(77, 107, 238) !important;
 }

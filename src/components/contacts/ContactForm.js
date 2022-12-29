@@ -145,7 +145,7 @@ const ContactForm = (props) => {
 										required={true}
 										hasError={contactHasError}
 										errorMessage='Contact number must be 11 characters'
-										inputs={{type: 'text', 
+										inputs={{type: 'tel', 
 														id: 'contact',
 														value: contact,
 														onChange: contactChangeHandler,
