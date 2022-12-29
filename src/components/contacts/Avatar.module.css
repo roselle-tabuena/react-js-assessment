@@ -19,12 +19,6 @@
 
 }
 
-@media screen and (max-width: 600px) {
-  .selected {
-    background-color: olive;
-  }
-}
-
 .selected {
   background-color: rgb(77, 107, 238) !important;
 }
