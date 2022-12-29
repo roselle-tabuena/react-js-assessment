@@ -12,6 +12,19 @@
 
 }
 
+@media (max-width: 576px) { 
+  .avatar-image {
+    width: 60%;
+  }
+
+}
+
+@media screen and (max-width: 600px) {
+  .selected {
+    background-color: olive;
+  }
+}
+
 .selected {
   background-color: rgb(77, 107, 238) !important;
 }
