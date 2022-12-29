@@ -55,7 +55,12 @@ function useResponse(requestFunction, startWithPending = false, action_type) {
           use_dispatch(contactActions.populateContacts(responseData));
         }
 
+        if (action_type === 'FETCH') {
+          use_dispatch(contactActions.cancelEdit())
+        }
+      
         if (action_type === 'REMOVE') {
+          use_dispatch(contactActions.cancelEdit())
           use_dispatch(contactActions.removeContact(requestData));
         }
 

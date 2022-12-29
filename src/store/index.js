@@ -34,6 +34,8 @@ const contactSlice = createSlice({
       state.contacts = action.payload
     },
     cancelEdit(state, action) {
+      if (!state.onEdit) return;
+      
       state.onEdit = [false, null]
     }
   }

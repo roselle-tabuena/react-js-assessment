@@ -9,8 +9,10 @@ const Input = (props) => {
                         </div>
 
   return (<Form.Group className="mb-3">
-            <Form.Label htmlFor={inputs.id}>{label} {required && <span className='text-danger'>*</span>}</Form.Label>
-            <Form.Control {...inputs} className={hasError && 'border-danger'} aria-describedby={`${inputs.id}HelpBlock`} />
+            <Form.Label htmlFor={inputs.id}>{label}: {required && <span className='text-danger'>*</span>}</Form.Label>
+            <Form.Control {...inputs} 
+                          className={hasError && 'border-danger'} aria-describedby={`${inputs.id}HelpBlock`}
+                           />
             {hasError && errorDisplay}
 
           </Form.Group>)

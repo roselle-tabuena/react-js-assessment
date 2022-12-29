@@ -52,19 +52,18 @@ const ContactForm = (props) => {
 			formIsValid = true;
 	}
 
-
 	useEffect(() => {
 
 		if(onEdit) {
 			let onEditContact = contacts.find(contact => contact.id === editId)
 
-			toast.info('You are on edit mode', { autoClose: 3000 })
+			toast.info('You are on edit mode', { autoClose: 2000 })
 
 			setSelectedAvatar(onEditContact.avatar || 'no-avatar')
 			setName(onEditContact.name)
 			setEmail(onEditContact.email)
 			setContact(onEditContact.contact)
-		}
+		} 
 
 	}, [onEdit, editId, contacts, setName, setEmail, setContact])
 	
@@ -124,8 +123,8 @@ const ContactForm = (props) => {
 										inputs={{type: 'text', 
 														id: 'name',
 														value: name,
-														onBlur: nameBlurHandlder,
 														onChange: nameChangeHandler,
+														onBlur: nameBlurHandlder,
 														'aria-label': "Your name",
 														name: 'name' }} />
 
