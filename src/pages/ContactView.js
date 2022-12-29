@@ -41,10 +41,11 @@ if (status === 'completed' && data !== null) {
                       <tr>
                         <td className='text-center'  colSpan='2'>
                           {data.avatar === 'no-avatar' && <LetteredAvatar name={data.name}  
-                                                                            imgClass='mx-auto'
-                                                                            backgroundColor="#023167" 
-                                                                            size={100} />}
-                          {data.avatar !== 'no-avatar' && <img src={img} alt={img} />}
+                                                                          imgClass='mx-auto'
+                                                                          backgroundColor="#023167" 
+                                                                          size={100} />}
+
+                          {data.avatar !== 'no-avatar' && <img src={img} alt={`${data.avatar}-avatar`} />}
                         </td> 
                       </tr>   
                       <tr className='text-center'>
@@ -90,7 +91,10 @@ if (status === 'completed' && data !== null) {
             <Col md={{ span: 6, offset: 3 }} sm={{ span: 8, offset: 2}}>
               <CustomCard title='View - Contact'>
                 {content}
-                <Link to='/' aria-label='Back to index'  className='btn btn-outline-dark mt-3'>Back</Link>
+                <Link to='/' 
+                      aria-label='Back to index' 
+                      title="Go back to contact" 
+                      className='btn btn-outline-dark mt-3'>Back</Link>
               </CustomCard>
             </Col>
             </Row>
