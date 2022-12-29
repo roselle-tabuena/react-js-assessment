@@ -12,7 +12,7 @@ const Contact = () => {
   const [editMode, ] = onEdit;
 
   return (<Container>
-          <Row>
+          <Row id='form_section' className='mt-5 pt-5'>
             <Col md={{ span: 6, offset: 3 }}>
               <CustomCard title={editMode ? 'Edit - Contact' : 'Add - Contact' }>
                 <NewContact />
@@ -20,7 +20,7 @@ const Contact = () => {
             </Col>
           </Row>
           
-          <Row>
+          <Row id='list_section'>
             <Col md={12}>
               <div aria-label='List of Contacts'>
                 <h1 className='fs-2 mt-5 mb-3'>Contact List</h1>

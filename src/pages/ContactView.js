@@ -87,7 +87,7 @@ if (status === 'completed' && data !== null) {
 
 
     return <Container>
-            <Row>
+            <Row className='mt-5 pt-4'>
             <Col md={{ span: 6, offset: 3 }} sm={{ span: 8, offset: 2}}>
               <CustomCard title='View - Contact'>
                 {content}

@@ -44,6 +44,11 @@ const ContactList = () => {
 
 
   const editContactHandler = (id) => {
+    const contactForm = document.getElementById('form_section')
+    const form = document.getElementById('name')
+
+    form.focus()
+    contactForm.scrollIntoView({ behavior: 'smooth' });
     dispatch(contactActions.onEditContact(id))
   }
 
